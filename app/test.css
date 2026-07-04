@@ -1,0 +1,874 @@
+.concierge-desk {
+  --concierge-topbar-height: 60px;
+
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-surface-atmospheric);
+  color: var(--color-stone);
+  font-family: var(--font-body);
+}
+
+.concierge-desk button,
+.concierge-desk input {
+  font: inherit;
+}
+
+.concierge-desk button {
+  cursor: pointer;
+}
+
+.concierge-topbar {
+  min-height: var(--concierge-topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 44px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+}
+
+.concierge-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.concierge-brand a {
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2.8px;
+  line-height: 1.5;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.concierge-brand span {
+  width: 1px;
+  height: 12px;
+  background: rgba(197, 160, 89, 0.15);
+}
+
+.concierge-brand p {
+  color: rgba(232, 225, 213, 0.45);
+  font-size: 10px;
+  letter-spacing: 2.2px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.concierge-greeting {
+  color: rgba(197, 160, 89, 0.7);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.concierge-shell {
+  height: calc(100svh - var(--concierge-topbar-height));
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 296px minmax(0, 1fr) 332px;
+}
+
+.concierge-profile,
+.concierge-recommendations {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.concierge-profile {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  border-right: 1px solid rgba(197, 160, 89, 0.15);
+  overflow: hidden;
+}
+
+.concierge-recommendations {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  border-left: 1px solid rgba(197, 160, 89, 0.15);
+  padding: 36px 24px;
+  overflow: hidden;
+}
+
+.concierge-panel {
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+}
+
+.concierge-traveller {
+  padding-top: 40px;
+  padding-bottom: 32px;
+}
+
+.concierge-kicker {
+  color: rgba(197, 160, 89, 0.7);
+  font-size: 9px;
+  letter-spacing: 2.52px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.concierge-monogram {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  margin-top: 20px;
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.95px;
+}
+
+.concierge-monogram::before,
+.concierge-monogram::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+}
+
+.concierge-monogram::before {
+  border-top: 1px solid var(--color-accent);
+  border-left: 1px solid var(--color-accent);
+  clip-path: polygon(0 0, 18% 0, 18% 18%, 0 18%);
+}
+
+.concierge-monogram::after {
+  border-right: 1px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-accent);
+  clip-path: polygon(82% 82%, 100% 82%, 100% 100%, 82% 100%);
+}
+
+.concierge-traveller h1 {
+  margin-top: 20px;
+  color: var(--color-stone);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.concierge-traveller-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 12px;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  background: rgba(197, 160, 89, 0.12);
+  color: var(--color-accent);
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.concierge-traveller-tag::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.concierge-muted,
+.concierge-question-list button,
+.concierge-destination-card div > p,
+.concierge-selection-note {
+  color: rgba(232, 225, 213, 0.45);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.concierge-muted {
+  margin-top: 16px;
+}
+
+.concierge-mood-card {
+  margin-top: 14px;
+  padding: 15px 17px;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  background: rgba(197, 160, 89, 0.06);
+}
+
+.concierge-mood-card strong,
+.concierge-destination-card h3 {
+  display: block;
+  color: var(--color-stone);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.concierge-mood-card span {
+  color: rgba(232, 225, 213, 0.45);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.6px;
+}
+
+.concierge-suggestions {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0;
+}
+
+.concierge-question-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-color: var(--color-accent) rgba(197, 160, 89, 0.12);
+  scrollbar-width: thin;
+}
+
+.concierge-question-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.concierge-question-list::-webkit-scrollbar-track {
+  background: rgba(197, 160, 89, 0.08);
+}
+
+.concierge-question-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.concierge-question-list button {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  min-height: 60px;
+  border: 1px solid transparent;
+  background: rgba(197, 160, 89, 0.03);
+  padding: 11px 13px;
+  text-align: left;
+}
+
+.concierge-question-list button span {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  margin-top: 6px;
+  rotate: 45deg;
+  background: rgba(197, 160, 89, 0.5);
+  color: rgba(197, 160, 89, 0.5);
+}
+
+.concierge-question-list button:hover {
+  border-color: rgba(197, 160, 89, 0.2);
+}
+
+.concierge-response {
+  min-width: 0;
+  min-height: calc(100svh - var(--concierge-topbar-height));
+  max-height: calc(100svh - var(--concierge-topbar-height));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.concierge-response-scroll {
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  justify-content: center;
+  grid-template-columns: minmax(0, min(100%, 720px));
+  overflow-y: auto;
+  padding: 44px 52px 36px;
+  scrollbar-color: var(--color-accent) rgba(197, 160, 89, 0.12);
+  scrollbar-width: thin;
+}
+
+.concierge-response-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.concierge-response-scroll::-webkit-scrollbar-track {
+  background: rgba(197, 160, 89, 0.08);
+}
+
+.concierge-response-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+.concierge-response-header {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: none;
+}
+
+.concierge-response-header > span {
+  width: 2px;
+  min-height: 60px;
+  background: linear-gradient(180deg, var(--color-accent), rgba(197, 160, 89, 0));
+}
+
+.concierge-response-header p,
+.concierge-response-tabs em {
+  color: rgba(197, 160, 89, 0.7);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.39px;
+  line-height: 1.5;
+}
+
+.concierge-response-header h2 {
+  margin-top: 6px;
+  color: var(--color-stone);
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.concierge-response-tabs {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 52px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.concierge-response-tabs > span {
+  color: rgba(232, 225, 213, 0.45);
+  font-size: 9px;
+  letter-spacing: 2.34px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.concierge-response-tabs div {
+  display: flex;
+  gap: 3px;
+}
+
+.concierge-response-tabs button {
+  border: 1px solid rgba(197, 160, 89, 0.22);
+  background: transparent;
+  color: rgba(197, 160, 89, 0.7);
+  padding: 7px 17px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.concierge-response-tabs button.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-surface-atmospheric);
+  font-weight: 600;
+}
+
+.concierge-response-tabs em {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.concierge-answer {
+  width: 100%;
+  max-width: none;
+  padding-top: 36px;
+}
+
+.concierge-answer p {
+  color: rgba(232, 225, 213, 0.65);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.95;
+}
+
+.concierge-answer p + p {
+  margin-top: 20px;
+}
+
+.concierge-answer .concierge-answer-lede {
+  color: var(--color-stone);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-style: italic;
+  line-height: 1.8;
+}
+
+.concierge-answer aside {
+  margin-top: 28px;
+  border-left: 2px solid var(--color-accent);
+  background: rgba(197, 160, 89, 0.12);
+  padding: 13px 18px;
+  color: rgba(197, 160, 89, 0.7);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.4px;
+  line-height: 1.7;
+}
+
+.concierge-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 52px;
+  border-top: 1px solid rgba(197, 160, 89, 0.15);
+}
+
+.concierge-compose label {
+  grid-column: 1;
+  grid-row: 1;
+  color: rgba(232, 225, 213, 0.3);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.concierge-compose input {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+  background: transparent;
+  color: var(--color-stone);
+  padding: 10px 0;
+  outline: 0;
+}
+
+.concierge-compose input:focus {
+  border-color: rgba(197, 160, 89, 0.7);
+}
+
+.concierge-compose input:focus + button,
+.concierge-compose button:hover {
+  border-color: rgba(197, 160, 89, 0.7);
+}
+
+.concierge-compose button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  background: transparent;
+  color: var(--color-accent);
+}
+
+.concierge-recommendations-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.concierge-recommendation-controls {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.concierge-recommendation-controls button {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  background: rgba(197, 160, 89, 0.04);
+}
+
+.concierge-recommendation-controls button:hover {
+  border-color: rgba(197, 160, 89, 0.7);
+  background: rgba(197, 160, 89, 0.1);
+}
+
+.concierge-recommendation-controls span {
+  width: 8px;
+  height: 8px;
+  display: block;
+  border-top: 1px solid var(--color-accent);
+  border-left: 1px solid var(--color-accent);
+}
+
+.concierge-recommendation-controls .up span {
+  translate: 0 2px;
+  rotate: 45deg;
+}
+
+.concierge-recommendation-controls .down span {
+  translate: 0 -2px;
+  rotate: 225deg;
+}
+
+.concierge-card-list {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+  scroll-behavior: smooth;
+  scroll-padding-block: 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.concierge-card-list::-webkit-scrollbar {
+  display: none;
+}
+
+.concierge-destination-card {
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.concierge-destination-card figure {
+  position: relative;
+  height: 136px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-surface-atmospheric);
+}
+
+.concierge-destination-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  opacity: 0.78;
+}
+
+.concierge-destination-card figure span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 34px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  background: rgba(13, 31, 23, 0.7);
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.88px;
+}
+
+.concierge-destination-card > div {
+  padding: 14px 16px;
+}
+
+.concierge-destination-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.concierge-destination-card h3 {
+  font-size: 16px;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.concierge-card-arrow {
+  color: rgba(197, 160, 89, 0.7);
+  width: 18px;
+}
+
+.concierge-region {
+  margin-top: 3px;
+  color: rgba(197, 160, 89, 0.7) !important;
+  font-size: 9px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1.26px;
+  line-height: 1.5 !important;
+  text-transform: uppercase;
+}
+
+.concierge-destination-card div > p:last-child {
+  margin-top: 10px;
+}
+
+.concierge-selection-note {
+  margin-top: 24px;
+  padding-top: 21px;
+  border-top: 1px solid rgba(197, 160, 89, 0.15);
+  font-size: 10px;
+  font-style: italic;
+  line-height: 1.65;
+}
+
+@media (min-width: 1440px) {
+  .concierge-topbar {
+    padding-inline: clamp(44px, 4vw, 72px);
+  }
+
+  .concierge-shell {
+    grid-template-columns:
+      clamp(280px, 17vw, 340px)
+      minmax(680px, 1fr)
+      clamp(360px, 24vw, 520px);
+  }
+
+  .concierge-panel {
+    padding-inline: clamp(32px, 2.4vw, 44px);
+  }
+
+  .concierge-response-tabs,
+  .concierge-response-scroll,
+  .concierge-compose {
+    padding-inline: clamp(40px, 4vw, 72px);
+  }
+
+  .concierge-response-scroll {
+    grid-template-columns: minmax(0, min(100%, 840px));
+  }
+
+  .concierge-recommendations {
+    padding-inline: clamp(28px, 2.2vw, 40px);
+  }
+
+  .concierge-destination-card figure {
+    height: clamp(148px, 9vw, 180px);
+  }
+}
+
+@media (max-width: 1180px) {
+  .concierge-desk {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  .concierge-shell {
+    height: auto;
+    min-height: 0;
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .concierge-response {
+    min-height: 0;
+    max-height: none;
+  }
+
+  .concierge-response-scroll {
+    overflow: visible;
+  }
+
+  .concierge-recommendations {
+    display: block;
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid rgba(197, 160, 89, 0.15);
+    overflow: visible;
+  }
+
+  .concierge-card-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .concierge-recommendation-controls {
+    display: none;
+  }
+}
+
+@media (min-width: 1181px) and (max-height: 820px) {
+  .concierge-desk {
+    --concierge-topbar-height: 48px;
+  }
+
+  .concierge-topbar {
+    padding-inline: 36px;
+  }
+
+  .concierge-brand a {
+    font-size: 12px;
+  }
+
+  .concierge-traveller {
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
+
+  .concierge-panel {
+    padding: 20px 28px;
+  }
+
+  .concierge-monogram {
+    width: 48px;
+    height: 48px;
+    margin-top: 16px;
+    font-size: 17px;
+  }
+
+  .concierge-traveller h1 {
+    margin-top: 16px;
+    font-size: 18px;
+  }
+
+  .concierge-muted {
+    margin-top: 12px;
+    line-height: 1.55;
+  }
+
+  .concierge-mood-card {
+    padding: 12px 14px;
+  }
+
+  .concierge-question-list button {
+    min-height: 52px;
+    padding-block: 9px;
+  }
+
+  .concierge-response-scroll {
+    padding: 32px 52px 28px;
+  }
+
+  .concierge-response-header h2 {
+    font-size: 25px;
+  }
+
+  .concierge-response-tabs {
+    padding-block: 10px;
+  }
+
+  .concierge-answer {
+    padding-top: 26px;
+  }
+
+  .concierge-answer .concierge-answer-lede {
+    font-size: 18px;
+    line-height: 1.65;
+  }
+
+  .concierge-answer p {
+    line-height: 1.72;
+  }
+
+  .concierge-answer p + p {
+    margin-top: 14px;
+  }
+
+  .concierge-answer aside {
+    margin-top: 20px;
+    padding-block: 11px;
+  }
+
+  .concierge-compose {
+    padding-block: 12px;
+  }
+
+  .concierge-recommendations {
+    padding: 28px 20px;
+  }
+}
+
+@media (max-width: 860px) {
+  .concierge-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px 24px;
+  }
+
+  .concierge-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .concierge-profile,
+  .concierge-recommendations {
+    border-inline: 0;
+  }
+
+  .concierge-profile {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  }
+
+  .concierge-panel {
+    border-bottom: 0;
+    border-right: 1px solid rgba(197, 160, 89, 0.15);
+  }
+
+  .concierge-panel:last-child {
+    border-right: 0;
+  }
+
+  .concierge-response-tabs,
+  .concierge-response-scroll,
+  .concierge-compose {
+    padding-inline: 32px;
+  }
+}
+
+@media (max-width: 720px) {
+  .concierge-profile,
+  .concierge-card-list {
+    grid-template-columns: 1fr;
+  }
+
+  .concierge-panel {
+    border-right: 0;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  }
+
+  .concierge-response-tabs {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .concierge-response-header h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 520px) {
+  .concierge-brand {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .concierge-brand span {
+    display: none;
+  }
+
+  .concierge-response-tabs,
+  .concierge-response-scroll,
+  .concierge-compose,
+  .concierge-recommendations,
+  .concierge-panel {
+    padding-inline: 24px;
+  }
+
+  .concierge-compose {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .concierge-compose button {
+    justify-self: end;
+  }
+}

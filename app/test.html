@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royale Isles Lanka - AI Test</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f5f5f5;
+            padding:40px;
+        }
+
+        .container{
+            width:900px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 5px 20px rgba(0,0,0,.1);
+        }
+
+        h1{
+            margin-bottom:25px;
+        }
+
+        label{
+            display:block;
+            margin-top:15px;
+            font-weight:bold;
+        }
+
+        input,select,textarea{
+            width:100%;
+            padding:12px;
+            margin-top:8px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        }
+
+        textarea{
+            height:120px;
+        }
+
+        button{
+            margin-top:20px;
+            padding:12px 25px;
+            background:#0066cc;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#004999;
+        }
+
+        #response{
+            margin-top:30px;
+            border:1px solid #ddd;
+            padding:20px;
+            min-height:200px;
+            white-space:pre-wrap;
+            background:#fafafa;
+        }
+
+        .loading{
+            color:green;
+            font-weight:bold;
+        }
+
+        #response ul{
+            padding-left:0;
+        }
+
+        #response li{
+            list-style:none;
+            margin-bottom:18px;
+        }
+
+        #response li img,
+        #response li .img-placeholder{
+            width:100%;
+            max-width:300px;
+            height:160px;
+            object-fit:cover;
+            border-radius:6px;
+            display:block;
+            margin-bottom:8px;
+        }
+
+        #response li .img-placeholder{
+            background:#e0e0e0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#888;
+            font-size:12px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>AI Concierge Testing</h1>
+
+<label>Traveller Mood</label>
+
+<select id="mood">
+    <option>romantic</option>
+    <option>adventurous</option>
+    <option>relaxed</option>
+    <option>family</option>
+</select>
+
+<label>Traveller Identity</label>
+
+<select id="identity">
+    <option>romantic</option>
+    <option>luxury traveller</option>
+    <option>backpacker</option>
+    <option>solo traveller</option>
+</select>
+
+<label>Search Type</label>
+
+<select id="personalized">
+    <option value="true">Curated Search</option>
+    <option value="false">General Search</option>
+</select>
+
+<label>Your Question</label>
+
+<textarea id="message">best beaches in sri lanka</textarea>
+
+<button onclick="sendMessage()">
+Ask AI
+</button>
+
+<div id="response">
+
+Waiting for response...
+
+</div>
+
+</div>
+
+<script>
+
+// The backend now returns a real "image" URL per recommendation (looked up
+// server-side via Wikimedia Commons). We just use it directly here, with a
+// fallback in case a given recommendation has no image or the link 404s.
+
+function makePlaceholder(){
+    const div = document.createElement('div');
+    div.className = 'img-placeholder';
+    div.textContent = 'No image available';
+    return div;
+}
+
+function buildImageElement(item){
+    if (!item.image){
+        return makePlaceholder();
+    }
+    const img = document.createElement('img');
+    img.src = item.image;
+    img.alt = item.name || '';
+    img.onerror = function(){
+        img.replaceWith(makePlaceholder());
+    };
+    return img;
+}
+
+function buildRecommendationsList(recommendations){
+    const list = document.createElement('ul');
+    recommendations.forEach(item => {
+        const li = document.createElement('li');
+        li.appendChild(buildImageElement(item));
+
+        const strong = document.createElement('strong');
+        strong.textContent = item.name || '';
+        li.appendChild(strong);
+        li.appendChild(document.createElement('br'));
+        li.appendChild(document.createTextNode(item.region || ''));
+        li.appendChild(document.createElement('br'));
+        li.appendChild(document.createTextNode(item.description || ''));
+
+        list.appendChild(li);
+    });
+    return list;
+}
+
+async function sendMessage(){
+
+    const mood=document.getElementById("mood").value;
+    const identity=document.getElementById("identity").value;
+    const message=document.getElementById("message").value;
+    const personalized=document.getElementById("personalized").value==="true";
+
+    const responseEl = document.getElementById("response");
+    responseEl.innerHTML="<span class='loading'>Thinking...</span>";
+
+    try{
+
+        const response=await fetch("http://127.0.0.1:8000/api/assistant/chat",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                message:message,
+
+                mood:mood,
+
+                identity:identity,
+
+                isPersonalized:personalized
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        let topHtml = "<h2>AI Response</h2><p>" + (data.narrative || "") + "</p>";
+
+        if (data.tailoredNote) {
+            topHtml += "<hr><h3>Tailored Note</h3><p>" + data.tailoredNote + "</p>";
+        }
+
+        const hasRecommendations = data.recommendations && data.recommendations.length > 0;
+
+        if (hasRecommendations) {
+            topHtml += "<hr><h3>Recommended Destinations</h3>";
+        }
+
+        responseEl.innerHTML = topHtml;
+
+        if (hasRecommendations) {
+            responseEl.appendChild(buildRecommendationsList(data.recommendations));
+        }
+
+        if (data.followUpQuestion) {
+            const followWrap = document.createElement('div');
+            followWrap.innerHTML = "<hr><h3>Follow Up</h3><p>" + data.followUpQuestion + "</p>";
+            responseEl.appendChild(followWrap);
+        }
+
+    }
+
+    catch(error){
+
+        responseEl.innerHTML = String(error);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
