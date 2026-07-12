@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import assistant
+from app.routers import assistant, brochure
 
 app = FastAPI()
 
@@ -24,4 +24,10 @@ app.include_router(
     assistant.router,
     prefix="/api/assistant",
     tags=["AI Assistant"]
+)
+
+app.include_router(
+    brochure.router,
+    prefix="/api/brochure",
+    tags=["Brochure"]
 )
