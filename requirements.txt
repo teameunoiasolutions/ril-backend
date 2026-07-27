@@ -8,3 +8,5 @@ httpx
 pydantic
 email-validator
 resend
+bcrypt
+python-jose[cryptography]
