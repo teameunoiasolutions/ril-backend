@@ -26,10 +26,14 @@ def replace_itineraries(
     The dashboard edits itineraries as one collection, so a full replace keeps
     the client and database in sync without diffing individual records.
     """
-    # Removing the existing itineraries cascades to their stops.
-    db.query(Itinerary).filter(Itinerary.traveller_id == current.id).delete(
-        synchronize_session=False
-    )
+    # Delete via the ORM (not a bulk query.delete) so the delete-orphan cascade
+    # removes each itinerary's stops too. A bulk delete would leave orphaned
+    # stop rows, and re-inserting stops that keep their ids would then collide
+    # on the primary key.
+    existing = db.query(Itinerary).filter(Itinerary.traveller_id == current.id).all()
+    for itinerary in existing:
+        db.delete(itinerary)
+    db.flush()
 
     for itinerary_in in payload.itineraries:
         itinerary = Itinerary(

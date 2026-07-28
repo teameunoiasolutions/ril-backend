@@ -70,6 +70,34 @@ PACKAGES = [
         "inclusions": ["Remote northern culture and island-hopping around Jaffna", "Leopard safaris in Wilpattu", "Trekking in the Knuckles mountain range", "Slow, unhurried days along the untouched southern bays"],
         "pace": "Unhurried", "best_for": "Returning travellers and grand tours", "reach": "The entire island, north to south", "price_from": 12400, "sort_order": 2,
     },
+    {
+        "name": "Coastal Serenity", "numeral": "IV", "duration": "8 Days",
+        "character": "Slow mornings by the sea, cinnamon gardens, and quiet fortified towns — the southern coast read at the pace of the tide.",
+        "route": ["Colombo", "Bentota", "Galle", "Weligama", "Mirissa", "Tangalle", "Airport"],
+        "inclusions": ["A private villa on the southern coast", "Galle Fort at golden hour", "A dawn whale-watching charter", "A cinnamon estate visit", "Sunset suppers by the sea"],
+        "pace": "Gentle", "best_for": "Coastal escapes and honeymoons", "reach": "Western & Southern coast", "price_from": 4200, "sort_order": 3,
+    },
+    {
+        "name": "Highland Retreat", "numeral": "V", "duration": "7 Days",
+        "character": "Misted tea country, cool verandas, and the slow work of restoration — hill stations and gardens reached by scenic mountain rail.",
+        "route": ["Colombo", "Kandy", "Nuwara Eliya", "Ella", "Haputale", "Airport"],
+        "inclusions": ["A tea-estate bungalow stay", "The scenic highland rail journey", "Private tea tastings", "Ayurvedic wellness mornings", "Nine Arches Bridge at first light"],
+        "pace": "Restorative", "best_for": "Wellness and cool-climate travel", "reach": "Central Highlands & Uva", "price_from": 3900, "sort_order": 4,
+    },
+    {
+        "name": "Wild Encounters", "numeral": "VI", "duration": "9 Days",
+        "character": "Leopard country, elephant gatherings, and dawn safaris with naturalists who know when not to speak — wilderness held with patience.",
+        "route": ["Colombo", "Wilpattu National Park", "Sigiriya", "Minneriya", "Kandy", "Udawalawe", "Yala", "Airport"],
+        "inclusions": ["Private leopard safaris in Yala", "The Minneriya elephant gathering", "A naturalist-led field morning", "Wilpattu wilderness drives", "A tented wild-coast retreat"],
+        "pace": "Adventurous", "best_for": "Wildlife and photography", "reach": "North-West, Centre & Deep South", "price_from": 5600, "sort_order": 5,
+    },
+    {
+        "name": "Sacred Circuit", "numeral": "VII", "duration": "11 Days",
+        "character": "Ancient capitals, cave temples, and living ritual — the island's spiritual heart entered slowly, with scholarship and protected timing.",
+        "route": ["Colombo", "Anuradhapura", "Mihintale", "Polonnaruwa", "Sigiriya", "Dambulla", "Kandy", "Airport"],
+        "inclusions": ["Private dawn access at Sigiriya", "The Dambulla cave temples", "The Temple of the Tooth", "Resident-scholar accompaniment", "A Kandyan dance and ritual evening"],
+        "pace": "Contemplative", "best_for": "Heritage and scholarship", "reach": "Cultural Triangle & Central", "price_from": 6100, "sort_order": 6,
+    },
 ]
 
 
@@ -122,13 +150,17 @@ def seed():
         else:
             print("Themes already present — skipping content seed.")
 
-        if db.query(Package).count() == 0:
-            for package in PACKAGES:
+        # Add any packages that aren't already present (matched by name), so
+        # re-running the seed introduces new packages without duplicating or
+        # clobbering ones the admin may have edited.
+        existing_names = {name for (name,) in db.query(Package.name).all()}
+        added = 0
+        for package in PACKAGES:
+            if package["name"] not in existing_names:
                 db.add(Package(**package))
-            db.commit()
-            print(f"Seeded {len(PACKAGES)} packages.")
-        else:
-            print("Packages already present — skipping.")
+                added += 1
+        db.commit()
+        print(f"Added {added} new package(s); {len(existing_names)} already present.")
 
         print("\nAdmin login:")
         print(f"  email:    {ADMIN_EMAIL}")
