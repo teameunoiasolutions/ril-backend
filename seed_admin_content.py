@@ -11,7 +11,7 @@ Admin login created:
 
 from app.database.database import Base, SessionLocal, engine
 from app.core.security import hash_password
-from app.models import Admin, Package, Place, Theme
+from app.models import Admin, Package, Place, Theme, ThemePackage
 
 ADMIN_EMAIL = "admin@royaleisles.lk"
 ADMIN_PASSWORD = "admin12345"
@@ -45,6 +45,124 @@ PLACES_BY_THEME = {
     ],
     "Culture & Human Connection": [
         ("Kandy", "Central Highlands", "A sacred hill capital of temple bells and living Kandyan culture.", 80.6350, 7.2906, "Year-round", ["Temple rituals", "Private guiding"]),
+    ],
+}
+
+# The two sub-packages sold under every theme on the Designed Trips flow.
+# "The Glimpse" is 2 days / half; "The Immersion" is 4 days / full. The hotel
+# and activities here are the locked inclusions the traveller cannot edit.
+THEME_PACKAGES_BY_THEME = {
+    "Wildlife & Wilderness": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 780,
+            "summary": "Two dawn drives in leopard country, with the afternoons left to the lodge veranda.",
+            "hotel": "Wild Coast Tented Lodge, Yala",
+            "activities": ["A private dawn safari in Yala Block I", "An evening waterhole drive", "A naturalist's briefing over dinner"],
+            "inclusions": ["Two nights, cocoon suite", "Park fees and private jeep", "Resident naturalist throughout", "All meals and soft drinks"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1960,
+            "summary": "Four days across two wildernesses — Yala's leopards and Wilpattu's quieter, older forest.",
+            "hotel": "Wild Coast Tented Lodge, Yala & Leopard Trails Camp, Wilpattu",
+            "activities": ["Full-day Yala leopard tracking", "Wilpattu villu circuit with a field researcher", "A night-sound walk with the camp naturalist", "Elephant gathering at Minneriya (seasonal)"],
+            "inclusions": ["Four nights across two camps", "All park fees and private jeeps", "Dedicated naturalist and tracker", "All meals, wines and camp transfers"],
+        },
+    ],
+    "Ocean & Discovery": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 640,
+            "summary": "A blue-whale morning off Mirissa, then the coast at its own unhurried pace.",
+            "hotel": "Cape Weligama, Southern Coast",
+            "activities": ["A private whale-watching charter at first light", "An afternoon on the cliff-edge pool", "Sunset supper by the sea"],
+            "inclusions": ["Two nights, ocean-view villa", "Private charter and marine guide", "Breakfast and one supper", "Coastal transfers"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1680,
+            "summary": "Four days of open water — whales, a sailing day, and the lagoons most travellers never see.",
+            "hotel": "Cape Weligama & Amanwella, Tangalle",
+            "activities": ["Blue-whale charter with a marine biologist", "A full sailing day along the southern bays", "Kayaking the Rekawa lagoon at dusk", "Turtle-nesting watch with a conservation ranger"],
+            "inclusions": ["Four nights across two properties", "All charters, skipper and marine guide", "All meals and a private beach supper", "Conservation contribution included"],
+        },
+    ],
+    "Heritage & Memory": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 720,
+            "summary": "Sigiriya before the gates open, and Dambulla's cave ceilings in the cool of the day.",
+            "hotel": "Water Garden Sigiriya",
+            "activities": ["The Sigiriya dawn ascent, ahead of the crowds", "The Dambulla cave temples with a resident scholar", "An evening of village cooking"],
+            "inclusions": ["Two nights, garden villa", "Private dawn access and site fees", "Resident-scholar accompaniment", "All meals"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1840,
+            "summary": "Four days through three ancient capitals, read slowly and in the right order.",
+            "hotel": "Water Garden Sigiriya & Ulagalla, Anuradhapura",
+            "activities": ["The Sigiriya dawn ascent", "Anuradhapura's sacred precinct and Bodhi Tree", "Polonnaruwa by bicycle at dawn", "A private evening at the Temple of the Tooth"],
+            "inclusions": ["Four nights across two properties", "All site fees and private access", "Archaeologist accompaniment throughout", "All meals and inter-site transfers"],
+        },
+    ],
+    "Wellness & Restoration": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 590,
+            "summary": "Two days of Ayurvedic mornings and long, uninterrupted afternoons.",
+            "hotel": "Santani Wellness, Kandy",
+            "activities": ["A physician's Ayurvedic consultation", "Two guided treatment mornings", "Sunrise yoga above the valley"],
+            "inclusions": ["Two nights, valley-view chalet", "Consultation and prescribed treatments", "Full wellness cuisine", "Daily yoga and meditation"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1520,
+            "summary": "A four-day prescribed programme — long enough for the treatments to actually work.",
+            "hotel": "Santani Wellness, Kandy",
+            "activities": ["A full Ayurvedic assessment and personal programme", "Daily panchakarma treatments", "Forest-bathing and silent walking", "A herbal-garden morning with the resident physician"],
+            "inclusions": ["Four nights, valley-view chalet", "Complete prescribed treatment course", "All wellness cuisine and herbal preparations", "Take-home preparations and follow-up notes"],
+        },
+    ],
+    "Rail & Landscape": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 540,
+            "summary": "The Kandy–Ella leg in a reserved observation carriage, and a tea estate at the end of it.",
+            "hotel": "98 Acres Resort, Ella",
+            "activities": ["The Nanu Oya–Ella rail leg, reserved seating", "A private tea-estate walk and tasting", "Nine Arches Bridge at first light"],
+            "inclusions": ["Two nights, estate chalet", "Reserved observation-carriage seats", "Estate tour and tasting", "Breakfast and one estate lunch"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1440,
+            "summary": "The full hill-country line, ridden in stages, with a planter's bungalow at each pause.",
+            "hotel": "Ceylon Tea Trails, Bogawantalawa & 98 Acres Resort, Ella",
+            "activities": ["The complete Kandy–Ella line, ridden in two stages", "A tea-estate bungalow stay with a resident planter", "Plucking and factory morning with an estate manager", "Highland walking on the Horton Plains escarpment"],
+            "inclusions": ["Four nights across two bungalows", "All reserved rail seating and transfers", "Private estate access and tastings", "All meals, afternoon teas and house drinks"],
+        },
+    ],
+    "Culture & Human Connection": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 610,
+            "summary": "Two days in Kandy — a dance rehearsal, a temple ritual, and a family kitchen.",
+            "hotel": "Kings Pavilion, Kandy",
+            "activities": ["A private Kandyan dance rehearsal", "The evening puja at the Temple of the Tooth", "A family kitchen and market morning"],
+            "inclusions": ["Two nights, heritage suite", "Private introductions and interpreter", "Temple access and offerings", "All meals"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1580,
+            "summary": "Four days with the people who keep the crafts alive — artisans, musicians and their workshops.",
+            "hotel": "Kings Pavilion, Kandy & Wallawwa, Colombo",
+            "activities": ["A private Kandyan dance rehearsal and drum lesson", "A mask-carver's workshop in Ambalangoda", "A silversmith's studio afternoon in Kandy", "A village cooking day with a family, start to finish"],
+            "inclusions": ["Four nights across two properties", "All artisan fees and materials", "Dedicated interpreter throughout", "All meals and a farewell supper"],
+        },
+    ],
+    "Shared Heritage": [
+        {
+            "tier": "glimpse", "name": "The Glimpse", "days": 2, "coverage": "half", "price_add": 560,
+            "summary": "Galle Fort's ramparts and a hill-station afternoon — two days of borrowed architecture.",
+            "hotel": "Amangalla, Galle Fort",
+            "activities": ["A Galle Fort rampart walk with a historian", "The Dutch Reformed Church and archive", "Colonial-era afternoon tea on the veranda"],
+            "inclusions": ["Two nights, chamber suite", "Historian-led walking tour", "Archive and museum access", "Breakfast and afternoon tea"],
+        },
+        {
+            "tier": "immersion", "name": "The Immersion", "days": 4, "coverage": "full", "price_add": 1500,
+            "summary": "Four days reading the island's shared chapter — fort towns, hill stations and old gardens.",
+            "hotel": "Amangalla, Galle Fort & Grand Hotel, Nuwara Eliya",
+            "activities": ["Galle Fort ramparts, archive and church", "Nuwara Eliya's hill-station architecture and old gardens", "The Colombo civic and Cinnamon Gardens circuit", "A private library afternoon with a resident historian"],
+            "inclusions": ["Four nights across two heritage properties", "Historian accompaniment throughout", "All archive, museum and garden access", "All meals and afternoon teas"],
+        },
     ],
 }
 
@@ -149,6 +267,29 @@ def seed():
             print(f"Seeded {len(THEMES)} themes with starter places.")
         else:
             print("Themes already present — skipping content seed.")
+
+        # Theme sub-packages (The Glimpse / The Immersion). Added per theme and
+        # matched by tier, so re-running fills gaps without duplicating or
+        # clobbering anything the admin has edited.
+        added_subpackages = 0
+        for title, sub_packages in THEME_PACKAGES_BY_THEME.items():
+            theme = db.query(Theme).filter(Theme.title == title).first()
+            if theme is None:
+                print(f"  Theme '{title}' not found — skipping its sub-packages.")
+                continue
+            existing_tiers = {
+                tier
+                for (tier,) in db.query(ThemePackage.tier)
+                .filter(ThemePackage.theme_id == theme.id)
+                .all()
+            }
+            for index, sub_package in enumerate(sub_packages):
+                if sub_package["tier"] in existing_tiers:
+                    continue
+                db.add(ThemePackage(theme_id=theme.id, sort_order=index, **sub_package))
+                added_subpackages += 1
+        db.commit()
+        print(f"Added {added_subpackages} new theme sub-package(s).")
 
         # Add any packages that aren't already present (matched by name), so
         # re-running the seed introduces new packages without duplicating or

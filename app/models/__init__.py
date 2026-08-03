@@ -1,6 +1,6 @@
 from app.models.traveller import Traveller, Itinerary, ItineraryStop
 from app.models.admin import Admin
-from app.models.content import Theme, Place, Package
+from app.models.content import Theme, Place, Package, ThemePackage
 
 __all__ = [
     "Traveller",
@@ -10,4 +10,5 @@ __all__ = [
     "Theme",
     "Place",
     "Package",
+    "ThemePackage",
 ]

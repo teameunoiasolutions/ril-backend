@@ -71,30 +71,97 @@ Only recommend locations within Sri Lanka.
 """
 
 
+def _extract_json_object(text: str) -> str | None:
+    """
+    Returns the outermost {...} block in `text`, or None if there isn't a
+    balanced one. Brace counting is string-aware so braces inside narrative
+    prose do not throw off the match.
+    """
+    start = text.find("{")
+    if start == -1:
+        return None
+
+    depth = 0
+    in_string = False
+    escaped = False
+
+    for index in range(start, len(text)):
+        char = text[index]
+
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : index + 1]
+
+    return None
+
+
 def parse_concierge_response(raw_text: str) -> dict:
     """
-    Defensive parser for the model's reply. Models occasionally wrap JSON in
-    ```json fences despite instructions, so strip those first. Falls back to
-    treating the raw text as plain narrative if JSON parsing fails, so the
-    chat never breaks even if the sidebar can't be populated that turn.
+    Defensive parser for the model's reply.
+
+    The model is asked for bare JSON but does not always comply: it may wrap
+    the object in ```json fences, or prefix it with a line of prose. Parsing
+    is therefore attempted in order — as-is, fence-stripped, then by pulling
+    out the outermost balanced {...} block. Only if all three fail is the
+    reply treated as plain narrative, so a malformed turn degrades to prose
+    instead of showing the guest raw JSON.
     """
     cleaned = raw_text.strip()
+
+    candidates = [cleaned]
+
     if cleaned.startswith("```"):
-        cleaned = cleaned.strip("`")
-        if cleaned.lower().startswith("json"):
-            cleaned = cleaned[4:].strip()
+        fenced = cleaned.strip("`").strip()
+        if fenced.lower().startswith("json"):
+            fenced = fenced[4:].strip()
+        candidates.append(fenced)
 
-    try:
-        data = json.loads(cleaned)
-    except json.JSONDecodeError:
-        return {
-            "narrative": raw_text,
-            "tailored_note": None,
-            "recommendations": [],
-            "follow_up_question": None,
-        }
+    extracted = _extract_json_object(cleaned)
+    if extracted:
+        candidates.append(extracted)
 
-    data.setdefault("tailored_note", None)
-    data.setdefault("recommendations", [])
-    data.setdefault("follow_up_question", None)
-    return data
+    for candidate in candidates:
+        try:
+            data = json.loads(candidate)
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+        if not isinstance(data, dict):
+            continue
+
+        data.setdefault("narrative", "")
+        data.setdefault("tailored_note", None)
+        data.setdefault("recommendations", [])
+        data.setdefault("follow_up_question", None)
+
+        # Guard the shape the router relies on: it iterates recommendations
+        # and calls .get() on each entry.
+        if not isinstance(data["recommendations"], list):
+            data["recommendations"] = []
+        else:
+            data["recommendations"] = [
+                item for item in data["recommendations"] if isinstance(item, dict)
+            ]
+
+        return data
+
+    return {
+        "narrative": raw_text,
+        "tailored_note": None,
+        "recommendations": [],
+        "follow_up_question": None,
+    }
