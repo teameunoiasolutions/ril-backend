@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
-from app.models import Package, Place, Theme
-from app.schemas.admin_schema import PackageOut, PlaceOut, ThemeOut
+from app.models import Package, Place, Theme, ThemePackage
+from app.schemas.admin_schema import PackageOut, PlaceOut, ThemeOut, ThemePackageOut
 
 router = APIRouter()
 
@@ -20,6 +20,15 @@ def list_places(theme_id: int | None = None, db: Session = Depends(get_db)):
     if theme_id is not None:
         query = query.filter(Place.theme_id == theme_id)
     return query.order_by(Place.sort_order, Place.id).all()
+
+
+@router.get("/theme-packages", response_model=list[ThemePackageOut])
+def list_theme_packages(theme_id: int | None = None, db: Session = Depends(get_db)):
+    """The Glimpse / The Immersion sub-packages sold under each theme."""
+    query = db.query(ThemePackage)
+    if theme_id is not None:
+        query = query.filter(ThemePackage.theme_id == theme_id)
+    return query.order_by(ThemePackage.sort_order, ThemePackage.id).all()
 
 
 @router.get("/packages", response_model=list[PackageOut])

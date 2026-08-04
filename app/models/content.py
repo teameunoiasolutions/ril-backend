@@ -24,6 +24,13 @@ class Theme(Base):
         order_by="Place.sort_order",
     )
 
+    theme_packages = relationship(
+        "ThemePackage",
+        back_populates="theme",
+        cascade="all, delete-orphan",
+        order_by="ThemePackage.sort_order",
+    )
+
 
 class Place(Base):
     """A place shown under a theme (name, region, coordinates, things to do)."""
@@ -44,6 +51,35 @@ class Place(Base):
     sort_order = Column(Integer, nullable=False, default=0)
 
     theme = relationship("Theme", back_populates="places")
+
+
+class ThemePackage(Base):
+    """A sub-package sold under a theme on the Designed Trips flow.
+
+    Each theme carries two tiers: "The Glimpse" (2 days, half) and
+    "The Immersion" (4 days, full). The traveller picks a Package, then a
+    Theme, then one of these — and the hotel/activities below are locked in.
+    `price_add` is added to the chosen package's `price_from`.
+    """
+
+    __tablename__ = "theme_packages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    theme_id = Column(
+        Integer, ForeignKey("themes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    tier = Column(String(32), nullable=False, default="glimpse")  # "glimpse" | "immersion"
+    name = Column(String(255), nullable=False)  # e.g. "The Glimpse"
+    days = Column(Integer, nullable=False, default=2)  # 2 or 4
+    coverage = Column(String(32), nullable=False, default="half")  # "half" | "full"
+    summary = Column(Text, nullable=False, default="")
+    hotel = Column(String(255), nullable=False, default="")
+    activities = Column(JSON, nullable=False, default=list)  # list[str]
+    inclusions = Column(JSON, nullable=False, default=list)  # list[str]
+    price_add = Column(Integer, nullable=False, default=0)  # USD per person, added to package
+    sort_order = Column(Integer, nullable=False, default=0)
+
+    theme = relationship("Theme", back_populates="theme_packages")
 
 
 class Package(Base):

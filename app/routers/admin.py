@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.admin_security import create_admin_token, get_current_admin
 from app.core.security import verify_password
 from app.database.database import get_db
-from app.models import Admin, Itinerary, Package, Place, Theme, Traveller
+from app.models import Admin, Itinerary, Package, Place, Theme, ThemePackage, Traveller
 from app.schemas.admin_schema import (
     AdminLoginRequest,
     AdminOut,
@@ -20,6 +20,8 @@ from app.schemas.admin_schema import (
     PlaceOut,
     ThemeIn,
     ThemeOut,
+    ThemePackageIn,
+    ThemePackageOut,
 )
 
 router = APIRouter()
@@ -151,6 +153,70 @@ def admin_delete_place(
     if place is None:
         raise HTTPException(status_code=404, detail="Place not found.")
     db.delete(place)
+    db.commit()
+
+
+# ---------------------------------------------------------------------------
+# Theme packages (the sub-packages sold under each theme)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/theme-packages", response_model=list[ThemePackageOut])
+def admin_list_theme_packages(
+    theme_id: int | None = None,
+    _: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    query = db.query(ThemePackage)
+    if theme_id is not None:
+        query = query.filter(ThemePackage.theme_id == theme_id)
+    return query.order_by(ThemePackage.sort_order, ThemePackage.id).all()
+
+
+@router.post(
+    "/theme-packages", response_model=ThemePackageOut, status_code=status.HTTP_201_CREATED
+)
+def admin_create_theme_package(
+    payload: ThemePackageIn,
+    _: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    if db.query(Theme).filter(Theme.id == payload.theme_id).first() is None:
+        raise HTTPException(status_code=400, detail="That theme does not exist.")
+    theme_package = ThemePackage(**payload.model_dump())
+    db.add(theme_package)
+    db.commit()
+    db.refresh(theme_package)
+    return theme_package
+
+
+@router.put("/theme-packages/{theme_package_id}", response_model=ThemePackageOut)
+def admin_update_theme_package(
+    theme_package_id: int,
+    payload: ThemePackageIn,
+    _: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    theme_package = db.query(ThemePackage).filter(ThemePackage.id == theme_package_id).first()
+    if theme_package is None:
+        raise HTTPException(status_code=404, detail="Theme package not found.")
+    for key, value in payload.model_dump().items():
+        setattr(theme_package, key, value)
+    db.commit()
+    db.refresh(theme_package)
+    return theme_package
+
+
+@router.delete("/theme-packages/{theme_package_id}", status_code=status.HTTP_204_NO_CONTENT)
+def admin_delete_theme_package(
+    theme_package_id: int,
+    _: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    theme_package = db.query(ThemePackage).filter(ThemePackage.id == theme_package_id).first()
+    if theme_package is None:
+        raise HTTPException(status_code=404, detail="Theme package not found.")
+    db.delete(theme_package)
     db.commit()
 
 

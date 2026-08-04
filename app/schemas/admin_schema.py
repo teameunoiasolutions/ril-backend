@@ -44,6 +44,39 @@ class PlaceOut(BaseModel):
     sort_order: int = Field(serialization_alias="sortOrder")
 
 
+class ThemePackageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    id: int
+    theme_id: int = Field(serialization_alias="themeId")
+    tier: str
+    name: str
+    days: int
+    coverage: str
+    summary: str
+    hotel: str
+    activities: list[str] = []
+    inclusions: list[str] = []
+    price_add: int = Field(serialization_alias="priceAdd")
+    sort_order: int = Field(serialization_alias="sortOrder")
+
+
+class ThemePackageIn(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    theme_id: int = Field(alias="themeId")
+    tier: str = "glimpse"
+    name: str
+    days: int = 2
+    coverage: str = "half"
+    summary: str = ""
+    hotel: str = ""
+    activities: list[str] = []
+    inclusions: list[str] = []
+    price_add: int = Field(default=0, alias="priceAdd")
+    sort_order: int = Field(default=0, alias="sortOrder")
+
+
 class ThemeOut(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -55,6 +88,9 @@ class ThemeOut(BaseModel):
     image_url: str | None = Field(default=None, serialization_alias="imageUrl")
     sort_order: int = Field(serialization_alias="sortOrder")
     places: list[PlaceOut] = []
+    theme_packages: list[ThemePackageOut] = Field(
+        default=[], serialization_alias="themePackages"
+    )
 
 
 class ThemeIn(BaseModel):
