@@ -7,7 +7,9 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL)
+# Neon suspends an idle compute and drops its connections, so check a pooled
+# connection is still alive before handing it out and retire it well before then.
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 
 SessionLocal = sessionmaker(
     autocommit=False,
