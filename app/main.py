@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.database import Base, engine
-from app.routers import admin, assistant, auth, brochure, content, itineraries
+from app.routers import admin, assistant, auth, brochure, content, enquiries, itineraries
 
 # Import models so their tables are registered on Base before create_all().
 from app import models  # noqa: F401
@@ -59,6 +59,19 @@ app.include_router(
 
 app.include_router(
     admin.router,
+    prefix="/api/admin",
+    tags=["Admin"]
+)
+
+app.include_router(
+    enquiries.router,
+    prefix="/api/enquiries",
+    tags=["Enquiries"]
+)
+
+# Admin-side reading/triage of the same enquiries.
+app.include_router(
+    enquiries.admin_router,
     prefix="/api/admin",
     tags=["Admin"]
 )
